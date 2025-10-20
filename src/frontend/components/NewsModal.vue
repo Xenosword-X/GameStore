@@ -38,7 +38,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useModal } from '@/mixins/modalMixin'
+import { useModal } from '@/composables/useModal'
 
 defineProps({
   article: Object,
