@@ -1,0 +1,10 @@
+@mixin custom-title-style {
+  font-weight: bold;
+  background: linear-gradient(to right, #003791, #e60012);
+  background-clip: text;
+  color: transparent;
+}
+
+@mixin background-color {
+  background: #f8f9fa;
+}

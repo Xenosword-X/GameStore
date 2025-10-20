@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 200" width="620" height="200">
+  <defs>
+    <!-- 藍到紅的漸層 -->
+    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#003791"></stop>
+      <stop offset="100%" stop-color="#E60012"></stop>
+    </linearGradient>
+  </defs>
+
+  <!-- 左側 D-Pad “+” -->
+  <g transform="translate(20,40)">
+    <rect x="20" y="0" width="20" height="80" fill="#003791"></rect>
+    <rect x="0" y="20" width="80" height="20" fill="#003791"></rect>
+  </g>
+
+  <!-- 文字 “GameZone” -->
+  <text x="120" y="120" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="url(#grad)">
+    GameZone
+  </text>
+
+  <!-- 右側簡化遊戲手把 -->
+  <g transform="translate(520,50) scale(0.5)">
+    <!-- 手把外框 -->
+    <path d="M0 30 h120 a30 30 0 0 1 30 30 v60 a30 30 0 0 1 -30 30 h-120 a30 30 0 0 1 -30 -30 v-60 a30 30 0 0 1 30 -30z" fill="#E60012"></path>
+    <!-- 四個按鈕 -->
+    <circle cx="60" cy="60" r="8" fill="#fff"></circle>
+    <circle cx="90" cy="60" r="8" fill="#fff"></circle>
+    <circle cx="60" cy="90" r="8" fill="#fff"></circle>
+    <circle cx="30" cy="60" r="8" fill="#fff"></circle>
+  </g>
+</svg>
