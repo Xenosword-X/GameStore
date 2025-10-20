@@ -119,8 +119,8 @@ import Swal from 'sweetalert2'
 import * as bootstrap from 'bootstrap'
 import { useCartStore } from '@/stores/cartStore'
 import { useStatusStore } from '@/stores/statusStore'
-import { currency } from '@/methods/filter'
-import { showToast } from '@/methods/Toast'
+import { currency } from '@/utils/filter'
+import { showToast } from '@/utils/toast'
 
 // --- stores ---
 const cartStore = useCartStore()

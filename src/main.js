@@ -2,7 +2,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import axios from 'axios'
-import VueAxios from 'vue-axios'
 
 // Loading overlay
 import Loading from 'vue3-loading-overlay'
@@ -45,7 +44,7 @@ setLocale('zh_TW')
 // plugins
 app.use(pinia)
 app.use(router)
-app.use(VueAxios, axios)
+app.use(axios)
 
 // 全域 mixin & components
 app.component('Loading', Loading)
