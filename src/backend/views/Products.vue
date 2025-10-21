@@ -3,10 +3,12 @@
   <Loading :active="isLoading" />
   <div class="d-flex justify-content-between align-items-center my-4">
     <h2 class="h4 fw-bold">產品管理</h2>
-    <button class="btn btn-primary d-flex align-items-center" @click="openModal(true)">
-      <div><i class="bi bi-plus-circle"></i> 增加產品</div>
+    <button class="btn btn-primary d-flex align-items-center gap-2" @click="openModal(true)">
+      <i class="bi bi-plus-circle"></i>
+      <span>新增產品</span>
     </button>
   </div>
+
   <div class="table-responsive">
     <table class="table table-hover align-middle text-nowrap">
       <thead class="table-light">
@@ -27,7 +29,7 @@
           <td class="text-start">{{ $filters.currency(item.price) }}</td>
           <td class="text-center">
             <span class="badge" :class="item.is_enabled ? 'bg-success' : 'bg-secondary'">
-              {{ item.is_enabled ? '啟用' : '未啟用' }}
+              {{ item.is_enabled ? '啟用中' : '未啟用' }}
             </span>
           </td>
           <td class="text-center">
@@ -44,22 +46,24 @@
       </tbody>
     </table>
   </div>
-  <pagination :pages="pageInfo" @emit-pages="getProducts" />
+
+  <Pagination :pages="pageInfo" @emit-pages="getProducts" />
+
   <ProductModal
     ref="productModal"
     :product="tempProduct"
     :isNew="isNew"
     @update-product="updateProduct"
   />
-  <DelModal :item="tempProduct" ref="delModal" @del-item="delProduct" />
+  <DelModal ref="delModal" :item="tempProduct" @del-item="delProduct" />
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import axios from 'axios'
 import ProductModal from '@/backend/components/ProductModal.vue'
 import DelModal from '@/backend/components/DelModal.vue'
-import pagination from '@/backend/components/Pagination.vue'
-import axios from 'axios'
+import Pagination from '@/backend/components/Pagination.vue'
 import { showToast } from '@/utils/toast'
 
 const products = ref([])
@@ -79,9 +83,12 @@ const getProducts = async (page = 1) => {
     if (res.data.success) {
       products.value = res.data.products
       pageInfo.value = res.data.pagination
+    } else {
+      showToast('error', res.data.message || '產品載入失敗')
     }
-  } catch {
-    showToast('error', '資料載入失敗')
+  } catch (err) {
+    console.error('載入產品失敗', err)
+    showToast('error', '產品載入失敗')
   } finally {
     isLoading.value = false
   }
@@ -97,19 +104,24 @@ const updateProduct = async (item) => {
   tempProduct.value = item
   let api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/product`
   let method = 'post'
+
   if (!isNew.value) {
     api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/product/${item.id}`
     method = 'put'
   }
+
   try {
     const res = await axios[method](api, { data: tempProduct.value })
     productModal.value.hideModal()
     if (res.data.success) {
-      await getProducts()
-      showToast('success', '更新成功')
+      showToast('success', isNew.value ? '新增產品成功' : '更新產品成功')
+      await getProducts(pageInfo.value?.current_page || 1)
+    } else {
+      showToast('error', res.data.message || '產品儲存失敗')
     }
-  } catch {
-    showToast('error', '更新失敗，請確認欄位')
+  } catch (err) {
+    console.error('儲存產品失敗', err)
+    showToast('error', '產品儲存失敗，請確認欄位')
   }
 }
 
@@ -119,13 +131,15 @@ const openDelProductModal = (item) => {
 }
 
 const delProduct = async () => {
-  const url = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/product/${tempProduct.value.id}`
+  const api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/product/${tempProduct.value.id}`
   try {
-    await axios.delete(url)
+    await axios.delete(api)
     delModal.value.hideModal()
-    await getProducts()
-  } catch {
-    showToast('error', '資料刪除失敗')
+    showToast('success', '產品已刪除')
+    await getProducts(pageInfo.value?.current_page || 1)
+  } catch (err) {
+    console.error('刪除產品失敗', err)
+    showToast('error', '產品刪除失敗')
   }
 }
 

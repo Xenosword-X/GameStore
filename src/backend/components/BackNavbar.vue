@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="#">管理後台</a>
+      <router-link to="/dashboard/products" class="navbar-brand fw-bold">後台管理</router-link>
       <button
         class="navbar-toggler"
         type="button"
@@ -25,7 +25,7 @@
             <router-link to="/dashboard/orders" class="nav-link">訂單</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/dashboard/coupons" class="nav-link">優惠卷</router-link>
+            <router-link to="/dashboard/coupons" class="nav-link">優惠券</router-link>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" @click.prevent="logout">登出</a>
@@ -40,17 +40,27 @@
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { showToast } from '@/utils/toast'
+
 const router = useRouter()
+
+const clearAuth = () => {
+  document.cookie = 'hexToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/'
+  delete axios.defaults.headers.common.Authorization
+}
+
 const logout = async () => {
   const api = `${import.meta.env.VITE_API}logout`
   try {
     const res = await axios.post(api)
-    if (res.data.success) {
-      router.push('/login')
-    }
+    if (!res.data.success) throw new Error(res.data.message || '登出失敗')
+    clearAuth()
+    showToast('success', '已成功登出')
+    router.push('/login')
   } catch (err) {
-    console.error('API 錯誤：', err)
-    showToast('error', '登出失敗')
+    console.error('API 錯誤', err)
+    clearAuth()
+    showToast('error', '登出失敗，請重新登入')
+    router.push('/login')
   }
 }
 </script>

@@ -5,11 +5,8 @@
 
     <div class="d-flex justify-content-between align-items-center my-4">
       <h2 class="h4 fw-bold">優惠券管理</h2>
-      <button
-        class="btn btn-primary d-flex align-items-center gap-1"
-        @click="openCouponModal(true)"
-      >
-        <i class="bi bi-plus-circle"></i> 建立新的優惠券
+      <button class="btn btn-primary d-flex align-items-center gap-1" @click="openCouponModal(true)">
+        <i class="bi bi-plus-circle"></i> 新增優惠券
       </button>
     </div>
 
@@ -31,15 +28,12 @@
             <td class="text-center">{{ formatDate(item.due_date) }}</td>
             <td class="text-center">
               <span class="badge" :class="item.is_enabled === 1 ? 'bg-success' : 'bg-secondary'">
-                {{ item.is_enabled === 1 ? '啟用' : '未啟用' }}
+                {{ item.is_enabled === 1 ? '啟用中' : '未啟用' }}
               </span>
             </td>
             <td class="text-center">
               <div class="btn-group">
-                <button
-                  class="btn btn-outline-primary btn-sm"
-                  @click="openCouponModal(false, item)"
-                >
+                <button class="btn btn-outline-primary btn-sm" @click="openCouponModal(false, item)">
                   <i class="bi bi-pencil-square"></i> 編輯
                 </button>
                 <button class="btn btn-outline-danger btn-sm" @click="openDelCouponModal(item)">
@@ -52,7 +46,6 @@
       </table>
     </div>
 
-    <!-- Modal -->
     <CouponModal
       ref="couponModal"
       :coupon="tempCoupon"
@@ -71,63 +64,55 @@ import CouponModal from '@/backend/components/CouponModal.vue'
 import DelModal from '@/backend/components/DelModal.vue'
 import Pagination from '@/backend/components/Pagination.vue'
 import { showToast } from '@/utils/toast'
-// 狀態管理
+
 const coupons = ref([])
 const pagination = ref({})
-const tempCoupon = ref({
-  title: '',
-  is_enabled: 0,
-  percent: 100,
-  code: '',
-})
+const tempCoupon = ref(createDefaultCoupon())
 const isLoading = ref(false)
 const isNew = ref(false)
 
-// refs
 const couponModal = ref(null)
 const delModal = ref(null)
 
-// 日期轉換
 const formatDate = (timestamp) => {
-  const date = new Date(timestamp * 1000)
-  return date.toISOString().split('T')[0]
+  const date = new Date(Number(timestamp) * 1000)
+  return Number.isFinite(date.getTime()) ? date.toISOString().split('T')[0] : '未設定'
 }
 
-// 取得優惠券
 const getCoupons = async (page = 1) => {
   const api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/coupons?page=${page}`
   isLoading.value = true
   try {
     const res = await axios.get(api)
-    coupons.value = res.data.coupons
-    pagination.value = res.data.pagination
-  } catch {
-    showToast('error', '資料載入失敗')
+    if (res.data.success) {
+      coupons.value = res.data.coupons
+      pagination.value = res.data.pagination
+    } else {
+      showToast('error', res.data.message || '優惠券載入失敗')
+    }
+  } catch (err) {
+    console.error('載入優惠券失敗', err)
+    showToast('error', '優惠券載入失敗')
   } finally {
     isLoading.value = false
   }
 }
 
-// 打開優惠券 Modal
 const openCouponModal = (newMode, item) => {
   isNew.value = newMode
-  if (isNew.value) {
-    tempCoupon.value = {
-      due_date: Math.floor(new Date().getTime() / 1000),
-    }
+  if (newMode) {
+    tempCoupon.value = createDefaultCoupon()
   } else {
     tempCoupon.value = { ...item }
   }
   couponModal.value.showModal()
 }
 
-// 開啟刪除 Modal
 const openDelCouponModal = (item) => {
   tempCoupon.value = { ...item }
   delModal.value.showModal()
 }
 
-// 新增或編輯優惠券
 const updateCoupon = async (couponData) => {
   tempCoupon.value = couponData
   let api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/coupon`
@@ -143,30 +128,42 @@ const updateCoupon = async (couponData) => {
     const res = await axios[method](api, { data: tempCoupon.value })
     if (res.data.success) {
       couponModal.value.hideModal()
-      await getCoupons()
       showToast('success', isNew.value ? '新增優惠券成功' : '更新優惠券成功')
+      await getCoupons(pagination.value?.current_page || 1)
     } else {
-      showToast('error', isNew.value ? '新增優惠券失敗' : '更新優惠券失敗')
+      showToast('error', res.data.message || '保存優惠券失敗')
     }
-  } catch {
-    showToast('error', '資料更新失敗')
+  } catch (err) {
+    console.error('儲存優惠券失敗', err)
+    showToast('error', '儲存優惠券失敗')
   } finally {
     isLoading.value = false
   }
 }
 
-// 刪除優惠券
 const delCoupon = async () => {
   const url = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/coupon/${tempCoupon.value.id}`
   isLoading.value = true
   try {
     await axios.delete(url)
     delModal.value.hideModal()
-    await getCoupons()
-  } catch {
-    alert('資料刪除失敗')
+    showToast('success', '優惠券已刪除')
+    await getCoupons(pagination.value?.current_page || 1)
+  } catch (err) {
+    console.error('刪除優惠券失敗', err)
+    showToast('error', '刪除優惠券失敗')
   } finally {
     isLoading.value = false
+  }
+}
+
+function createDefaultCoupon() {
+  return {
+    title: '',
+    code: '',
+    percent: 100,
+    is_enabled: 0,
+    due_date: Math.floor(Date.now() / 1000),
   }
 }
 

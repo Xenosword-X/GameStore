@@ -189,6 +189,7 @@ const createOrder = async () => {
     if (res.data.success) {
       showToast('success', '已送出訂單')
       const orderId = res.data.orderId
+      await cartStore.getCart()
       router.push(`/user/checkout/${orderId}`)
     }
   } catch {

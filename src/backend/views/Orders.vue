@@ -7,10 +7,10 @@
     <table class="table table-hover align-middle text-nowrap">
       <thead class="table-light">
         <tr>
-          <th>購買時間</th>
+          <th>購買日期</th>
           <th>Email</th>
-          <th>購買項目</th>
-          <th class="text-end">應付金額</th>
+          <th>購買品項</th>
+          <th class="text-end">金額</th>
           <th class="text-center">付款狀態</th>
           <th class="text-center">操作</th>
         </tr>
@@ -19,7 +19,7 @@
       <tbody v-if="orders.length">
         <tr v-for="(item, key) in orders" :key="key" :class="{ 'text-muted': !item.is_paid }">
           <td>{{ formatDate(item.create_at) }}</td>
-          <td>{{ item.user?.email || '無資料' }}</td>
+          <td>{{ item.user?.email || '未填寫' }}</td>
           <td>
             <ul class="list-unstyled mb-0">
               <li v-for="(product, i) in item.products" :key="i">
@@ -38,8 +38,9 @@
                   class="form-check-input"
                   type="checkbox"
                   :id="`paidSwitch${item.id}`"
-                  v-model="item.is_paid"
-                  @change="updatePaid(item)"
+                  :checked="Boolean(item.is_paid)"
+                  :disabled="isLoading"
+                  @change="updatePaid(item, $event.target.checked)"
                 />
               </div>
             </div>
@@ -72,25 +73,21 @@ import DelModal from '@/backend/components/DelModal.vue'
 import Pagination from '@/backend/components/Pagination.vue'
 import { showToast } from '@/utils/toast'
 
-// 狀態
 const orders = ref([])
 const pagination = ref({})
 const isLoading = ref(false)
 const tempOrder = ref({})
 
-// Modal 參考
 const orderModal = ref(null)
 const delModal = ref(null)
 
-// 日期格式化
 const formatDate = (timestamp) => {
   const num = Number(timestamp)
-  if (!num || isNaN(num)) return '無效時間'
+  if (!Number.isFinite(num)) return '日期格式錯誤'
   const date = new Date(num * 1000)
   return date.toISOString().split('T')[0]
 }
 
-// 取得訂單
 const getOrders = async (page = 1) => {
   const api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/orders?page=${page}`
   isLoading.value = true
@@ -99,51 +96,57 @@ const getOrders = async (page = 1) => {
     if (res.data.success) {
       orders.value = res.data.orders
       pagination.value = res.data.pagination
+    } else {
+      showToast('error', res.data.message || '訂單載入失敗')
     }
-  } catch {
-    alert('資料載入失敗')
+  } catch (err) {
+    console.error('訂單載入錯誤', err)
+    showToast('error', '訂單載入失敗')
   } finally {
     isLoading.value = false
   }
 }
 
-// 檢視訂單
 const openModal = (item) => {
   tempOrder.value = { ...item }
   orderModal.value.showModal()
 }
 
-// 開啟刪除
 const openDelOrderModal = (item) => {
   tempOrder.value = { ...item }
   delModal.value.showModal()
 }
 
-// 更新付款狀態
-const updatePaid = async (item) => {
-  isLoading.value = true
+const updatePaid = async (item, checked) => {
+  const newStatus = typeof checked === 'boolean' ? checked : Boolean(item.is_paid)
+  const previousStatus = Boolean(item.is_paid)
   const api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/order/${item.id}`
-  const paid = { is_paid: item.is_paid }
 
+  isLoading.value = true
   try {
-    await axios.put(api, { data: paid })
-    await getOrders()
-  } catch {
-    showToast('error', '資料更新失敗')
+    await axios.put(api, { data: { is_paid: newStatus } })
+    item.is_paid = newStatus ? 1 : 0
+    showToast('success', '付款狀態已更新')
+    await getOrders(pagination.value?.current_page || 1)
+  } catch (err) {
+    console.error('更新付款狀態失敗', err)
+    item.is_paid = previousStatus ? 1 : 0
+    showToast('error', '付款狀態更新失敗')
   } finally {
     isLoading.value = false
   }
 }
 
-// 刪除訂單
 const delOrder = async () => {
   const api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/order/${tempOrder.value.id}`
   try {
     await axios.delete(api)
     delModal.value.hideModal()
-    await getOrders()
-  } catch {
-    showToast('error', '資料刪除失敗')
+    showToast('success', '訂單已刪除')
+    await getOrders(pagination.value?.current_page || 1)
+  } catch (err) {
+    console.error('刪除訂單失敗', err)
+    showToast('error', '訂單刪除失敗')
   }
 }
 

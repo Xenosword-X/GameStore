@@ -1,30 +1,26 @@
 <template>
   <div
     class="modal fade"
-    id="exampleModal"
+    id="productModal"
     tabindex="-1"
-    aria-labelledby="exampleModalLabel"
+    aria-labelledby="productModalLabel"
     aria-hidden="true"
     ref="modal"
   >
     <div class="modal-dialog modal-xl" role="document">
       <div class="modal-content border-0">
         <div class="modal-header bg-dark text-white">
-          <h5 class="modal-title" id="exampleModalLabel">
+          <h5 class="modal-title" id="productModalLabel">
             <span>{{ isNew ? '新增產品' : '編輯產品' }}</span>
           </h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+
         <div class="modal-body">
           <div class="row">
             <div class="col-sm-4">
               <div class="mb-3">
-                <label for="image" class="form-label">輸入圖片網址</label>
+                <label for="image" class="form-label">主要圖片網址</label>
                 <input
                   type="text"
                   class="form-control"
@@ -34,50 +30,54 @@
                 />
               </div>
               <div class="mb-3">
-                <label for="customFile" class="form-label"
-                  >或 上傳圖片
-                  <i class="fas fa-spinner fa-spin"></i>
+                <label for="customFile" class="form-label">
+                  或上傳圖片
+                  <i class="fas fa-spinner fa-spin" v-if="isUploading"></i>
                 </label>
                 <input
                   type="file"
                   id="customFile"
                   class="form-control"
-                  ref="fileInput"
+                  accept="image/*"
                   @change="uploadFile"
                 />
               </div>
-              <img class="img-fluid" :src="tempProduct.imageUrl" alt="" />
-              <!-- 延伸技巧，多圖 -->
-              <div class="mt-5" v-if="tempProduct.images">
-                <div v-for="(image, key) in tempProduct.images" class="mb-3 input-group" :key="key">
+              <img class="img-fluid" :src="tempProduct.imageUrl" alt="主要產品圖片" />
+
+              <!-- 延伸圖片 -->
+              <div class="mt-5" v-if="tempProduct.imagesUrl">
+                <div
+                  v-for="(image, key) in tempProduct.imagesUrl"
+                  :key="`image-${key}`"
+                  class="mb-3 input-group"
+                >
                   <input
                     type="url"
-                    class="form-control form-control"
-                    v-model="tempProduct.images[key]"
-                    placeholder="請輸入連結"
+                    class="form-control"
+                    v-model="tempProduct.imagesUrl[key]"
+                    placeholder="請輸入圖片連結"
                   />
                   <button
                     type="button"
                     class="btn btn-outline-danger"
-                    @click="tempProduct.images.splice(key, 1)"
+                    @click="removeImage(key)"
                   >
                     移除
                   </button>
                 </div>
                 <div
                   v-if="
-                    tempProduct.images[tempProduct.images.length - 1] || !tempProduct.images.length
+                    tempProduct.imagesUrl[tempProduct.imagesUrl.length - 1] !== '' ||
+                    !tempProduct.imagesUrl.length
                   "
                 >
-                  <button
-                    class="btn btn-outline-primary btn-sm d-block w-100"
-                    @click="tempProduct.images.push('')"
-                  >
+                  <button class="btn btn-outline-primary btn-sm d-block w-100" @click="addImage">
                     新增圖片
                   </button>
                 </div>
               </div>
             </div>
+
             <div class="col-sm-8">
               <div class="mb-3">
                 <label for="title" class="form-label">標題</label>
@@ -86,7 +86,7 @@
                   class="form-control"
                   id="title"
                   v-model="tempProduct.title"
-                  placeholder="請輸入標題"
+                  placeholder="請輸入產品標題"
                 />
               </div>
               <div class="row gx-2">
@@ -96,11 +96,11 @@
                     <option disabled value="">請選擇分類</option>
                     <option value="主機">主機</option>
                     <option value="遊戲">遊戲</option>
-                    <option value="配件">配件</option>
+                    <option value="周邊">周邊</option>
                   </select>
                 </div>
                 <div class="mb-3 col-md-6">
-                  <label for="price" class="form-label">單位</label>
+                  <label for="unit" class="form-label">單位</label>
                   <input
                     type="text"
                     class="form-control"
@@ -134,11 +134,11 @@
               </div>
               <hr />
               <div class="mb-3">
-                <label for="description" class="form-label">產品介紹影片</label>
+                <label for="description" class="form-label">產品描述</label>
                 <textarea
-                  type="text"
                   class="form-control"
                   id="description"
+                  rows="2"
                   v-model="tempProduct.description"
                   placeholder="請輸入產品描述"
                 ></textarea>
@@ -146,37 +146,32 @@
               <div class="mb-3">
                 <label for="content" class="form-label">說明內容</label>
                 <textarea
-                  type="text"
                   class="form-control"
                   id="content"
+                  rows="4"
                   v-model="tempProduct.content"
-                  placeholder="請輸入產品說明內容"
+                  placeholder="請輸入產品說明"
                 ></textarea>
               </div>
-              <div class="mb-3">
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    v-model="tempProduct.is_enabled"
-                    :true-value="1"
-                    :false-value="0"
-                    id="is_enabled"
-                  />
-                  <label class="form-check-label" for="is_enabled"> 是否啟用 </label>
-                </div>
+              <div class="form-check mb-3">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  v-model="tempProduct.is_enabled"
+                  :true-value="1"
+                  :false-value="0"
+                  id="is_enabled"
+                />
+                <label class="form-check-label" for="is_enabled">是否啟用</label>
               </div>
             </div>
           </div>
         </div>
+
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            @click="$emit('update-product', tempProduct)"
-          >
-            Save changes
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+          <button type="button" class="btn btn-primary" @click="$emit('update-product', tempProduct)">
+            儲存變更
           </button>
         </div>
       </div>
@@ -186,8 +181,8 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { useModal } from '@/composables/useModal'
 import axios from 'axios'
+import { useModal } from '@/composables/useModal'
 
 const props = defineProps({
   product: { type: Object, default: () => ({}) },
@@ -197,32 +192,74 @@ const props = defineProps({
 defineEmits(['update-product'])
 
 const modal = ref(null)
-const tempProduct = ref({ imagesUrl: [] })
+const tempProduct = ref(createDefaultProduct())
+const isUploading = ref(false)
 
-// 使用 useModal 組合函式
 const { showModal, hideModal } = useModal(modal)
 
-// 同步父層傳入的 product
 watch(
   () => props.product,
   (newVal) => {
-    tempProduct.value = { ...newVal }
+    const base = createDefaultProduct()
+    const source = newVal && Object.keys(newVal).length ? newVal : base
+    tempProduct.value = {
+      ...base,
+      ...source,
+      imagesUrl: Array.isArray(source.imagesUrl) ? [...source.imagesUrl] : [],
+      imageUrl: source.imageUrl || '',
+    }
   },
+  { immediate: true },
 )
 
-const uploadFile = async (e) => {
-  const uploadFile = e.target.files[0]
+const uploadFile = async (event) => {
+  const file = event.target.files?.[0]
+  if (!file) return
+
   const formData = new FormData()
-  formData.append('file-to-upload', uploadFile)
+  formData.append('file-to-upload', file)
   const url = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/upload`
+
   try {
+    isUploading.value = true
     const res = await axios.post(url, formData)
     if (res.data.success) {
       tempProduct.value.imageUrl = res.data.imageUrl
+    } else {
+      alert(res.data.message || '圖片上傳失敗')
     }
   } catch (err) {
-    alert('資料新增失敗')
-    console.error(err)
+    console.error('圖片上傳錯誤', err)
+    alert('圖片上傳失敗')
+  } finally {
+    isUploading.value = false
+    event.target.value = ''
+  }
+}
+
+const addImage = () => {
+  if (!Array.isArray(tempProduct.value.imagesUrl)) {
+    tempProduct.value.imagesUrl = []
+  }
+  tempProduct.value.imagesUrl.push('')
+}
+
+const removeImage = (index) => {
+  tempProduct.value.imagesUrl.splice(index, 1)
+}
+
+function createDefaultProduct() {
+  return {
+    title: '',
+    category: '',
+    unit: '',
+    origin_price: 0,
+    price: 0,
+    description: '',
+    content: '',
+    is_enabled: 0,
+    imageUrl: '',
+    imagesUrl: [],
   }
 }
 

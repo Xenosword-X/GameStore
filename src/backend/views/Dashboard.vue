@@ -7,7 +7,7 @@
     </div>
     <div v-else class="d-flex justify-content-center align-items-center py-5">
       <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden">載入中...</span>
       </div>
     </div>
   </div>
