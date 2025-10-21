@@ -2,7 +2,7 @@ import axios from 'axios'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useStatusStore } from './statusStore'
-import { showToast } from '@/methods/Toast'
+import { showToast } from '@/utils/toast'
 
 export const useProductStore = defineStore('productStore', () => {
   const status = useStatusStore()
@@ -17,8 +17,8 @@ export const useProductStore = defineStore('productStore', () => {
       const res = await axios.get(`${API}api/${PATH}/products/all`)
       products.value = res.data.products
     } catch (err) {
-      showToast('error', '資料載入失敗')
-      console.err(err)
+      showToast('error', '商品列表載入失敗')
+      console.error(err)
     } finally {
       status.isLoading = false
     }
@@ -26,6 +26,6 @@ export const useProductStore = defineStore('productStore', () => {
 
   return {
     products,
-    getProducts
+    getProducts,
   }
 })

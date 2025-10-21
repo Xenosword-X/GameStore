@@ -42,7 +42,7 @@ import { useRouter } from 'vue-router'
 import { showToast } from '@/utils/toast'
 const router = useRouter()
 const logout = async () => {
-  const api = `${import.meta.env.VUE_APP_API}logout`
+  const api = `${import.meta.env.VITE_API}logout`
   try {
     const res = await axios.post(api)
     if (res.data.success) {

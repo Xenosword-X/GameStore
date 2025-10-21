@@ -1,15 +1,15 @@
-<template>
+﻿<template>
   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-0 sticky-top">
     <div class="container">
       <router-link class="navbar-brand fw-bold text-primary logo-link" to="/">
         <img
-          :src="require('@/assets/LOGO.svg')"
+          :src="logoSrc"
           alt="GameZone Logo"
           class="img-fluid"
           style="width: auto; height: 50px"
         />
       </router-link>
-      <!-- 手機版漢堡選單按鈕 -->
+      <!-- ?��??�漢?�選?��???-->
       <button
         class="navbar-toggler"
         type="button"
@@ -22,7 +22,7 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <!-- 導覽項目靠右 -->
+      <!-- 導覽?�目?�右 -->
       <div
         class="collapse navbar-collapse justify-content-end align-items-center"
         id="navbarNav"
@@ -31,7 +31,7 @@
         <ul class="navbar-nav align-items-center">
           <li class="nav-item mx-2">
             <router-link to="/customize/CInfo" class="nav-link px-2" @click="collapseNavbar">
-              客製服務 <i class="bi bi-wrench-adjustable"></i>
+              客製服務<i class="bi bi-wrench-adjustable"></i>
             </router-link>
           </li>
           <li class="nav-item mx-2">
@@ -56,7 +56,7 @@
               <i class="bi bi-cart3 fs-4"></i>
               <span
                 class="badge rounded-circle position-absolute bg-danger"
-                v-if="cart.carts.length"
+                v-if="hasCartItems"
                 style="
                   bottom: 0;
                   right: 0;
@@ -69,7 +69,7 @@
                   align-items: center;
                 "
               >
-                {{ cart.carts.length }}
+                {{ cartItemCount }}
               </span>
             </button>
           </li>
@@ -80,18 +80,22 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useCartStore } from '@/stores/cartStore'
+import { storeToRefs } from 'pinia'
 import * as bootstrap from 'bootstrap'
+const logoSrc = new URL('@/assets/img/LOGO.svg', import.meta.url).href
 
-// 取得購物車資料
+// ?��?購物車�???
 const cartStore = useCartStore()
-const cart = cartStore.cart
+const { cart } = storeToRefs(cartStore)
+const cartItemCount = computed(() => cart.value?.carts?.length ?? 0)
+const hasCartItems = computed(() => cartItemCount.value > 0)
 
-// Navbar DOM 參考
+// Navbar DOM ?��?
 const navbarNav = ref(null)
 
-// 關閉 Navbar 收合
+// ?��? Navbar ?��?
 const collapseNavbar = () => {
   const instance = bootstrap.Collapse.getInstance(navbarNav.value)
   if (instance) {

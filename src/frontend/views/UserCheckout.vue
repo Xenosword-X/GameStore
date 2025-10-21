@@ -96,7 +96,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
-import { showToast } from '@/methods/Toast'
+import { showToast } from '@/utils/toast'
 
 // 狀態
 const order = ref({ user: {}, products: [] })

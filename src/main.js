@@ -44,11 +44,14 @@ setLocale('zh_TW')
 // plugins
 app.use(pinia)
 app.use(router)
-app.use(axios)
+
+app.config.globalProperties.$filters = { currency }
+app.config.globalProperties.$axios = axios
 
 // 全域 mixin & components
 app.component('Loading', Loading)
-app.component('VeeForm', Form)
+// eslint-disable-next-line vue/no-reserved-component-names
+app.component('Form', Form)
 app.component('Field', Field)
 app.component('ErrorMessage', ErrorMessage)
 

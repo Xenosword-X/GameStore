@@ -46,7 +46,12 @@ defineProps({
 })
 
 const modal = ref(null)
-const { hideModal } = useModal(modal)
+const { showModal, hideModal } = useModal(modal)
+
+defineExpose({
+  showModal,
+  hideModal,
+})
 
 // 日期格式化
 const formatDate = (ts) => {

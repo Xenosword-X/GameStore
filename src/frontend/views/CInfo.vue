@@ -2,7 +2,7 @@
   <div class="container my-7">
     <div class="row">
       <div class="col-md-6">
-        <img src="@/assets/CInfo1.jpg" alt="CInfo1" class="img-fluid" />
+        <img src="@/assets/img/CInfo1.jpg" alt="CInfo1" class="img-fluid" />
       </div>
       <div class="col-md-4 m-auto text-center">
         <h3 class="mt-4 title">主機貼膜</h3>
@@ -13,7 +13,7 @@
     </div>
     <div class="row flex-row-reverse">
       <div class="col-md-6">
-        <img src="@/assets/CInfo2.jpg" alt="CInfo2" class="img-fluid" />
+        <img src="@/assets/img/CInfo2.jpg" alt="CInfo2" class="img-fluid" />
       </div>
       <div class="col-md-4 m-auto text-center">
         <h3 class="mt-4 title">機身烤漆</h3>
@@ -24,7 +24,7 @@
     </div>
     <div class="row">
       <div class="col-md-6">
-        <img src="@/assets/CInfo3.jpg" alt="CInfo3" class="img-fluid" />
+        <img src="@/assets/img/CInfo3.jpg" alt="CInfo3" class="img-fluid" />
       </div>
       <div class="col-md-4 m-auto text-center">
         <h3 class="mt-4 title">配件改裝</h3>

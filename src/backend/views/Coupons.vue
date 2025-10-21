@@ -70,7 +70,7 @@ import axios from 'axios'
 import CouponModal from '@/backend/components/CouponModal.vue'
 import DelModal from '@/backend/components/DelModal.vue'
 import Pagination from '@/backend/components/Pagination.vue'
-
+import { showToast } from '@/utils/toast'
 // 狀態管理
 const coupons = ref([])
 const pagination = ref({})
@@ -102,7 +102,7 @@ const getCoupons = async (page = 1) => {
     coupons.value = res.data.coupons
     pagination.value = res.data.pagination
   } catch {
-    alert('資料載入失敗')
+    showToast('error', '資料載入失敗')
   } finally {
     isLoading.value = false
   }
@@ -144,12 +144,12 @@ const updateCoupon = async (couponData) => {
     if (res.data.success) {
       couponModal.value.hideModal()
       await getCoupons()
-      alert(isNew.value ? '新增優惠券成功' : '更新優惠券成功')
+      showToast('success', isNew.value ? '新增優惠券成功' : '更新優惠券成功')
     } else {
-      alert(isNew.value ? '新增優惠券失敗' : '更新優惠券失敗')
+      showToast('error', isNew.value ? '新增優惠券失敗' : '更新優惠券失敗')
     }
   } catch {
-    alert('資料更新失敗')
+    showToast('error', '資料更新失敗')
   } finally {
     isLoading.value = false
   }

@@ -60,6 +60,7 @@ import ProductModal from '@/backend/components/ProductModal.vue'
 import DelModal from '@/backend/components/DelModal.vue'
 import pagination from '@/backend/components/Pagination.vue'
 import axios from 'axios'
+import { showToast } from '@/utils/toast'
 
 const products = ref([])
 const pageInfo = ref({})
@@ -80,7 +81,7 @@ const getProducts = async (page = 1) => {
       pageInfo.value = res.data.pagination
     }
   } catch {
-    alert('資料載入失敗')
+    showToast('error', '資料載入失敗')
   } finally {
     isLoading.value = false
   }
@@ -105,10 +106,10 @@ const updateProduct = async (item) => {
     productModal.value.hideModal()
     if (res.data.success) {
       await getProducts()
-      alert('更新成功')
+      showToast('success', '更新成功')
     }
   } catch {
-    alert('更新失敗，請確認欄位')
+    showToast('error', '更新失敗，請確認欄位')
   }
 }
 
@@ -124,7 +125,7 @@ const delProduct = async () => {
     delModal.value.hideModal()
     await getProducts()
   } catch {
-    alert('資料刪除失敗')
+    showToast('error', '資料刪除失敗')
   }
 }
 

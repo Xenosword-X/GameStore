@@ -10,7 +10,7 @@
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import Navbar from '@/backend/components/Navbar.vue'
+import Navbar from '@/backend/components/BackNavbar.vue'
 
 // router 實例
 const router = useRouter()

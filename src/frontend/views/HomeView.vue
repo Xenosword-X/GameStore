@@ -111,21 +111,21 @@
         <div class="carousel-inner">
           <h2 class="carousel-title text-center title mb-3">我們的服務</h2>
           <div class="carousel-item active" data-bs-interval="3000">
-            <img src="@/assets/Carousel1.jpg" class="d-block w-100" alt="遊戲商城" />
+            <img src="@/assets/img/Carousel1.jpg" class="d-block w-100" alt="遊戲商城" />
             <div class="carousel-caption p-3 rounded">
               <h5>遊戲商城</h5>
               <p>各式各樣的遊戲主機與軟體我們都有</p>
             </div>
           </div>
           <div class="carousel-item" data-bs-interval="3000">
-            <img src="@/assets/Carousel2.png" class="d-block w-100" alt="客製服務" />
+            <img src="@/assets/img/Carousel2.png" class="d-block w-100" alt="客製服務" />
             <div class="carousel-caption p-3 rounded">
               <h5>客製服務</h5>
               <p>想要讓主機更加繽紛嗎？我們為您打造專屬外觀</p>
             </div>
           </div>
           <div class="carousel-item" data-bs-interval="3000">
-            <img src="@/assets/Carousel3.png" class="d-block w-100" alt="抽獎活動" />
+            <img src="@/assets/img/Carousel3.png" class="d-block w-100" alt="抽獎活動" />
             <div class="carousel-caption p-3 rounded">
               <h5>抽獎活動</h5>
               <p>答對 8 題以上即可獲得抽獎資格</p>
@@ -180,9 +180,9 @@
 import { ref, computed, onMounted } from 'vue'
 import NewsModal from '@/frontend/components/NewsModal.vue'
 import HotSale from '@/frontend/components/HotSale.vue'
-import headerImg from '@/assets/header.jpg'
+import headerImg from '@/assets/img/header.jpg'
 import axios from 'axios'
-import { showToast } from '@/methods/Toast'
+import { showToast } from '@/utils/toast'
 
 // 狀態管理
 const articles = ref([])

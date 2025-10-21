@@ -1,4 +1,4 @@
-<!-- eslint-disable vue/multi-word-component-names -->
+﻿<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <footer class="bg-dark text-white py-5">
     <div class="container">
@@ -7,7 +7,7 @@
         <div class="col-md-4 mb-4 mb-md-0">
           <h5 class="mb-3">
             <img
-              :src="require('@/assets/LOGO_white.png')"
+              :src="logoWhiteSrc"
               alt="GameZone Logo"
               style="width: 300px; width: 200px"
             />
@@ -47,7 +47,9 @@
   </footer>
 </template>
 
-<script></script>
+<script setup>
+const logoWhiteSrc = new URL('@/assets/img/LOGO_white.png', import.meta.url).href
+</script>
 
 <style scoped>
 .socialLink {

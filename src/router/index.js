@@ -10,6 +10,7 @@ const routes = [
   {
     path: '/customize',
     component: () => import('@/frontend/views/Customize.vue'),
+    redirect: '/customize/CInfo',
     children: [
       { path: 'CInfo', component: () => import('@/frontend/views/CInfo.vue') },
       { path: 'CPrice', component: () => import('@/frontend/views/CPrice.vue') },
@@ -18,7 +19,7 @@ const routes = [
   },
 
   { path: '/questions', component: () => import('@/frontend/views/Questions.vue') },
-  { path: '/cart', component: () => import('@/frontend/views/UserCartlist.vue') },
+  { path: '/cart', component: () => import('@/frontend/views/UserCarlist.vue') },
   { path: '/product/:productId', component: () => import('@/frontend/views/UserProduct.vue') },
 
   {

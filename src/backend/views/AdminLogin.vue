@@ -58,7 +58,7 @@ const user = ref({
 })
 
 const signIn = async () => {
-  const api = `${import.meta.env.VITE_APP_API}admin/signin`
+  const api = `${import.meta.env.VITE_API}admin/signin`
   try {
     const res = await axios.post(api, user.value)
     if (res.data.success) {

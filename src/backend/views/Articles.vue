@@ -64,7 +64,7 @@ import axios from 'axios'
 import ArticleModal from '@/backend/components/ArticleModal.vue'
 import DelModal from '@/backend/components/DelModal.vue'
 import Pagination from '@/backend/components/Pagination.vue'
-import { showToast } from '@/methods/Toast'
+import { showToast } from '@/utils/toast'
 
 // 狀態
 const articles = ref([])

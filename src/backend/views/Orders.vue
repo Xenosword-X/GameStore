@@ -70,6 +70,7 @@ import axios from 'axios'
 import OrderModal from '@/backend/components/OrderModal.vue'
 import DelModal from '@/backend/components/DelModal.vue'
 import Pagination from '@/backend/components/Pagination.vue'
+import { showToast } from '@/utils/toast'
 
 // 狀態
 const orders = ref([])
@@ -128,7 +129,7 @@ const updatePaid = async (item) => {
     await axios.put(api, { data: paid })
     await getOrders()
   } catch {
-    alert('資料更新失敗')
+    showToast('error', '資料更新失敗')
   } finally {
     isLoading.value = false
   }
@@ -142,7 +143,7 @@ const delOrder = async () => {
     delModal.value.hideModal()
     await getOrders()
   } catch {
-    alert('資料刪除失敗')
+    showToast('error', '資料刪除失敗')
   }
 }
 

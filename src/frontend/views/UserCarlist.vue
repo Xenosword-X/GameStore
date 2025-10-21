@@ -74,7 +74,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProductStore } from '@/stores/productStore'
 import { useCartStore } from '@/stores/cartStore'
@@ -112,6 +112,19 @@ const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * perPage.value
   const end = start + perPage.value
   return filteredProducts.value.slice(start, end)
+})
+
+watch(selectedCategory, () => {
+  currentPage.value = 1
+})
+
+watch(filteredProducts, () => {
+  const total = totalPages.value
+  if (total === 0) {
+    currentPage.value = 1
+  } else if (currentPage.value > total) {
+    currentPage.value = total
+  }
 })
 
 // 分頁切換

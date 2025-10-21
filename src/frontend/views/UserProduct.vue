@@ -65,7 +65,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
-import { showToast } from '@/methods/Toast'
+import { showToast } from '@/utils/toast'
 import ProductTab from '@/frontend/components/ProductTab.vue'
 
 // 狀態

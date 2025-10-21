@@ -156,7 +156,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { Form, Field, ErrorMessage } from 'vee-validate'
-import { showToast } from '@/methods/Toast'
+import { showToast } from '@/utils/toast'
 import { useCartStore } from '@/stores/cartStore'
 import { useStatusStore } from '@/stores/statusStore'
 
