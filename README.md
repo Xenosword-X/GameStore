@@ -1,12 +1,12 @@
 # 🎮 遊戲電商網站 Game Shop E-commerce Website
 
-這是一個使用 **Vue 3 (Options API)** 搭配 **Pinia** 狀態管理與 **Bootstrap 5** 製作的遊戲電商網站，模擬線上遊戲商店的完整購物流程。除了商品選購與購物車功能，亦設計了主頁導覽、客製服務表單與問答抽獎活動頁面，呈現更完整的電商平台體驗。
+這是一個使用 **Vue 3 (composition API)** 搭配 **Pinia** 狀態管理與 **Bootstrap 5** 製作的遊戲電商網站，模擬線上遊戲商店的完整購物流程。除了商品選購與購物車功能，亦設計了主頁導覽、客製服務表單與問答抽獎活動頁面，呈現更完整的電商平台體驗。
 
 🔗 Demo 線上預覽  
-👉 [https://xenosword-x.github.io/final_project/](https://xenosword-x.github.io/final_project/)
+👉 [https://xenosword-x.github.io/final_project/](https://xenosword-x.github.io/GameStore/)
 
 📂 原始碼 GitHub  
-👉 [https://github.com/Xenosword-X/final_project](https://github.com/Xenosword-X/final_project)
+👉 [https://github.com/Xenosword-X/final_project](https://github.com/Xenosword-X/GameStore)
 
 ---
 
@@ -26,13 +26,14 @@
 ## 📁 技術與工具
 
 - HTML5 / CSS3 / Sass / Bootstrap 5  
-- Vue.js 3（Options API）  
+- Vue.js 3（Composition API）  
 - Vue Router 路由管理  
 - Pinia 狀態管理工具  
 - Axios 串接 RESTful API  
 - VeeValidate 表單驗證工具  
 - SweetAlert2 Toast 訊息提示  
 - Git / GitHub Pages 靜態部署
+- Vite 前端建構工具
 
 ---
 
